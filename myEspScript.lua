@@ -3,7 +3,7 @@ local ESP = {
     Enabled = false,
     Boxes = true,
     BoxShift = CFrame.new(0,-1.5,0),
-	BoxSize = Vector3.new(4,6,0),
+    BoxSize = Vector3.new(4,6,0),
     Color = Color3.fromRGB(255, 170, 0),
     FaceCamera = false,
     Names = true,
@@ -28,49 +28,49 @@ local WorldToViewportPoint = cam.WorldToViewportPoint
 
 --Functions--
 local function Draw(obj, props)
-	local new = Drawing.new(obj)
-	
-	props = props or {}
-	for i,v in pairs(props) do
-		new[i] = v
-	end
-	return new
+    local new = Drawing.new(obj)
+    
+    props = props or {}
+    for i,v in pairs(props) do
+        new[i] = v
+    end
+    return new
 end
 
 function ESP:GetTeam(p)
-	local ov = self.Overrides.GetTeam
-	if ov then
-		return ov(p)
-	end
-	
-	return p and p.Team
+    local ov = self.Overrides.GetTeam
+    if ov then
+        return ov(p)
+    end
+    
+    return p and p.Team
 end
 
 function ESP:IsTeamMate(p)
     local ov = self.Overrides.IsTeamMate
-	if ov then
-		return ov(p)
+    if ov then
+        return ov(p)
     end
     
     return self:GetTeam(p) == self:GetTeam(plr)
 end
 
 function ESP:GetColor(obj)
-	local ov = self.Overrides.GetColor
-	if ov then
-		return ov(obj)
+    local ov = self.Overrides.GetColor
+    if ov then
+        return ov(obj)
     end
     local p = self:GetPlrFromChar(obj)
-	return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
+    return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
 end
 
 function ESP:GetPlrFromChar(char)
-	local ov = self.Overrides.GetPlrFromChar
-	if ov then
-		return ov(char)
-	end
-	
-	return plrs:GetPlayerFromCharacter(char)
+    local ov = self.Overrides.GetPlrFromChar
+    if ov then
+        return ov(char)
+    end
+    
+    return plrs:GetPlayerFromCharacter(char)
 end
 
 function ESP:Toggle(bool)
@@ -149,7 +149,7 @@ function boxBase:Update()
 
     local color
     if ESP.Highlighted == self.Object then
-       color = ESP.HighlightColor
+        color = ESP.HighlightColor
     else
         color = self.Color or self.ColorDynamic and self:ColorDynamic() or ESP:GetColor(self.Object) or ESP.Color
     end
@@ -189,11 +189,11 @@ function boxBase:Update()
     end
     local size = self.Size
     local locs = {
-        TopLeft = cf * ESP.BoxShift * CFrame.new(size.X/2,size.Y/2,0),
-        TopRight = cf * ESP.BoxShift * CFrame.new(-size.X/2,size.Y/2,0),
-        BottomLeft = cf * ESP.BoxShift * CFrame.new(size.X/2,-size.Y/2,0),
-        BottomRight = cf * ESP.BoxShift * CFrame.new(-size.X/2,-size.Y/2,0),
-        TagPos = cf * ESP.BoxShift * CFrame.new(0,size.Y/2,0),
+        TopLeft = cf * ESP.BoxShift * CFrame.new(size.X/2, size.Y/2, 0),
+        TopRight = cf * ESP.BoxShift * CFrame.new(-size.X/2, size.Y/2, 0),
+        BottomLeft = cf * ESP.BoxShift * CFrame.new(size.X/2, -size.Y/2, 0),
+        BottomRight = cf * ESP.BoxShift * CFrame.new(-size.X/2, -size.Y/2, 0),
+        TagPos = cf * ESP.BoxShift * CFrame.new(0, size.Y/2 + 2, 0), -- Text naik 2 unit
         Torso = cf * ESP.BoxShift
     }
 
@@ -247,7 +247,7 @@ function boxBase:Update()
         if Vis6 then
             self.Components.Tracer.Visible = true
             self.Components.Tracer.From = Vector2.new(TorsoPos.X, TorsoPos.Y)
-            self.Components.Tracer.To = Vector2.new(cam.ViewportSize.X/2,cam.ViewportSize.Y/ESP.AttachShift)
+            self.Components.Tracer.To = Vector2.new(cam.ViewportSize.X/2, cam.ViewportSize.Y/ESP.AttachShift)
             self.Components.Tracer.Color = color
         else
             self.Components.Tracer.Visible = false
@@ -265,7 +265,7 @@ function ESP:Add(obj, options)
     local box = setmetatable({
         Name = options.Name or obj.Name,
         Type = "Box",
-        Color = options.Color --[[or self:GetColor(obj)]],
+        Color = options.Color,
         Size = options.Size or self.BoxSize,
         Object = obj,
         Player = options.Player or plrs:GetPlayerFromCharacter(obj),
@@ -289,24 +289,24 @@ function ESP:Add(obj, options)
         Visible = self.Enabled and self.Boxes
     })
     box.Components["Name"] = Draw("Text", {
-		Text = box.Name,
-		Color = box.Color,
-		Center = true,
-		Outline = true,
+        Text = box.Name,
+        Color = box.Color,
+        Center = true,
+        Outline = true,
         Size = 19,
         Visible = self.Enabled and self.Names
-	})
-	box.Components["Distance"] = Draw("Text", {
-		Color = box.Color,
-		Center = true,
-		Outline = true,
+    })
+    box.Components["Distance"] = Draw("Text", {
+        Color = box.Color,
+        Center = true,
+        Outline = true,
         Size = 19,
         Visible = self.Enabled and self.Names
-	})
-	
-	box.Components["Tracer"] = Draw("Line", {
-		Thickness = ESP.Thickness,
-		Color = box.Color,
+    })
+    
+    box.Components["Tracer"] = Draw("Line", {
+        Thickness = ESP.Thickness,
+        Color = box.Color,
         Transparency = 1,
         Visible = self.Enabled and self.Tracers
     })
@@ -324,12 +324,12 @@ function ESP:Add(obj, options)
     end)
 
     local hum = obj:FindFirstChildOfClass("Humanoid")
-	if hum then
+    if hum then
         hum.Died:Connect(function()
             if ESP.AutoRemove ~= false then
                 box:Remove()
             end
-		end)
+        end)
     end
 
     return box
@@ -357,12 +357,14 @@ local function CharAdded(char)
         })
     end
 end
+
 local function PlayerAdded(p)
     p.CharacterAdded:Connect(CharAdded)
     if p.Character then
         coroutine.wrap(CharAdded)(p.Character)
     end
 end
+
 plrs.PlayerAdded:Connect(PlayerAdded)
 for i,v in pairs(plrs:GetPlayers()) do
     if v ~= plr then
