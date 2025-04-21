@@ -75,3 +75,5 @@ function ESP:Add(obj, options)
 
     return box  -- Menambahkan return untuk mengembalikan objek ESP yang telah ditambahkan
 end
+
+return ESP
